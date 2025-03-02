@@ -28,11 +28,14 @@ public class FieldOfView : MonoBehaviour
 
     //NAVMESH
     public Transform player;
-    public Transform Checkpoint1;
 
     private NavMeshAgent guard;
 
     public bool chase = false;
+
+    public Transform[] patrolPoints;
+    int patrolPointIndex;
+    Vector3 targetPoint;
 
 
 
@@ -42,21 +45,45 @@ public class FieldOfView : MonoBehaviour
         StartCoroutine(FOVRoutine());
 
         guard = GetComponent<NavMeshAgent>();
+        UpdatePatrolDestination();
+
     }
 
     private void Update()
     {
-        //if (canSeePlayer == false)
-        //{
-        //    DecreaseSuspicion();
-        //}
+        if (canSeePlayer == true)
+        {
+            chase = true;
+        }
         if (chase == true)
         {
             guard.destination = player.position;
         }
-        else
+        else if (chase == false)
         {
-            guard.destination = Checkpoint1.position;
+            UpdatePatrolDestination();
+            if (Vector3.Distance(transform.position, targetPoint) < 1)
+            {
+                IteratePatrolPointIndex();
+                UpdatePatrolDestination();
+            }
+        }
+
+        if (suspicionLevel1 == true)
+        {
+            guard.speed = 3.5f;
+        }
+        if (suspicionLevel2 == true)
+        {
+            guard.speed = 5;
+        }
+        if (suspicionLevel3 == true)
+        {
+            guard.speed = 6.5f;
+        }
+        if (suspicionLevel4 == true)
+        {
+            guard.speed = 8;
         }
     }
 
@@ -71,13 +98,11 @@ public class FieldOfView : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Checkpoint"))
+        if (chase == true && other.CompareTag("Safe"))
         {
-            Destroy(other.gameObject);
-            Debug.Log("reached check");
-            chase = true;
+            chase = false;
         }
     }
 
@@ -184,29 +209,21 @@ public class FieldOfView : MonoBehaviour
         }
 
 
-        //if (suspicion >= 1 && suspicion < 2)
-        //{
 
-        //    if (suspicion != 1.1)
-        //    {
-        //        suspicion -= .1f;
-        //    }
-        //    if (suspicion == 1)
-        //    {
-        //        Debug.Log("Checkpoint 1");
-        //    }
-        //}
+    }
 
-        //if (suspicion >= 2 && suspicion < 3)
-        //{
-        //    if (suspicion != 2.1)
-        //    {
-        //        suspicion -= .1f;
-        //    }
-        //    if (suspicion == 2)
-        //    {
-        //        Debug.Log("Checkpoint 2");
-        //    }
-        //}
+    void UpdatePatrolDestination()
+    {
+        targetPoint = patrolPoints[patrolPointIndex].position;
+        guard.SetDestination(targetPoint);
+    }
+
+    void IteratePatrolPointIndex()
+    {
+        patrolPointIndex++;
+        if (patrolPointIndex == patrolPoints.Length)
+        {
+            patrolPointIndex = 0;
+        }
     }
 }
