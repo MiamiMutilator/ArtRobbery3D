@@ -12,6 +12,8 @@ public class FieldOfView : MonoBehaviour
     public float angle;
 
     public GameObject playerRef;
+    public GameObject pauseMenuRef;
+    public GameObject loseUI;
 
     public LayerMask targetMask;
     public LayerMask obstructionMask;
@@ -26,6 +28,8 @@ public class FieldOfView : MonoBehaviour
     public bool suspicionLevel3 = false;
     public bool suspicionLevel4 = false;
 
+    public bool lost = false;
+
     //NAVMESH
     public Transform player;
 
@@ -37,8 +41,6 @@ public class FieldOfView : MonoBehaviour
     int patrolPointIndex;
     Vector3 targetPoint;
 
-
-
     private void Start()
     {
         playerRef = GameObject.FindGameObjectWithTag("Player");
@@ -47,6 +49,7 @@ public class FieldOfView : MonoBehaviour
         guard = GetComponent<NavMeshAgent>();
         UpdatePatrolDestination();
 
+        this.gameObject.GetComponent<Animator>().SetBool("isWalking", true);
     }
 
     private void Update()
@@ -71,19 +74,19 @@ public class FieldOfView : MonoBehaviour
 
         if (suspicionLevel1 == true)
         {
-            guard.speed = 3.5f;
+            guard.speed = 1.5f;
         }
         if (suspicionLevel2 == true)
         {
-            guard.speed = 5;
+            guard.speed = 3f;
         }
         if (suspicionLevel3 == true)
         {
-            guard.speed = 6.5f;
+            guard.speed = 4.5f;
         }
         if (suspicionLevel4 == true)
         {
-            guard.speed = 8;
+            guard.speed = 6f;
         }
     }
 
@@ -103,6 +106,16 @@ public class FieldOfView : MonoBehaviour
         if (chase == true && other.CompareTag("Safe"))
         {
             chase = false;
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            loseUI.SetActive(true);
+            pauseMenuRef.SetActive(false);
+            player.GetComponent<FPSController>().canMove = false;
         }
     }
 
@@ -205,11 +218,10 @@ public class FieldOfView : MonoBehaviour
         }
         if (suspicionLevel4 == true)
         {
-            Debug.Log("You Lose!");
+            player.GetComponent<FPSController>().canMove = false;
+            loseUI.SetActive(true);
+            pauseMenuRef.SetActive(false);
         }
-
-
-
     }
 
     void UpdatePatrolDestination()
