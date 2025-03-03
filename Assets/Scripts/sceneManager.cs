@@ -7,19 +7,10 @@ public class sceneManager : MonoBehaviour
 {
     //Ralfo Manzur
     //very simple script comprised of functions that can be used by the editor/application to load scenes, can be called/used in a variety of ways
-    public void Hall0()
-    {
-        SceneManager.LoadScene("Hall0");
-    }
 
-    public void Hall1()
+    public void Level1()
     {
-        SceneManager.LoadScene("Hall1");
-    }
-
-    public void ProtoScene()
-    {
-        SceneManager.LoadScene("Proto Scene");
+        SceneManager.LoadScene("Level1");
     }
 
     public void LoadMenu()
