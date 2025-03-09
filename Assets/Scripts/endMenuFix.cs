@@ -15,18 +15,7 @@ public class endMenuFix : MonoBehaviour
 
     void Update()
     {
-        if (loseUI.activeInHierarchy)
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-
-        if (winUI.activeInHierarchy)
+        if (winUI.activeInHierarchy || loseUI.activeInHierarchy)
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;

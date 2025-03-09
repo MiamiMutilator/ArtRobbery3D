@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class FieldOfView : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class FieldOfView : MonoBehaviour
 
     //Other
     public float suspicion = 0;
-    public bool suspicionLevel0 = true;
+    //public bool suspicionLevel0 = true;
     public bool suspicionLevel1 = false;
     public bool suspicionLevel2 = false;
     public bool suspicionLevel3 = false;
@@ -37,11 +38,16 @@ public class FieldOfView : MonoBehaviour
 
     public bool chase = false;
 
+    public GameObject sus1UI;
+    public GameObject sus2UI;
+    public GameObject sus3UI;
+    public GameObject sus4UI;
+
     public Transform[] patrolPoints;
     int patrolPointIndex;
     Vector3 targetPoint;
 
-    private void Start()
+    public void Start()
     {
         playerRef = GameObject.FindGameObjectWithTag("Player");
         StartCoroutine(FOVRoutine());
@@ -74,19 +80,26 @@ public class FieldOfView : MonoBehaviour
 
         if (suspicionLevel1 == true)
         {
-            guard.speed = 1.5f;
+            guard.speed = 2f;
+            sus1UI.SetActive(true);
         }
         if (suspicionLevel2 == true)
         {
-            guard.speed = 3f;
+            guard.speed = 3.5f;
+            sus1UI.SetActive(false);
+            sus2UI.SetActive(true);
         }
         if (suspicionLevel3 == true)
         {
-            guard.speed = 4.5f;
+            guard.speed = 5f;
+            sus2UI.SetActive(false);
+            sus3UI.SetActive(true);
         }
         if (suspicionLevel4 == true)
         {
-            guard.speed = 6f;
+            guard.speed = 6.5f;
+            sus3UI.SetActive(false);
+            sus4UI.SetActive(true);
         }
     }
 
@@ -159,7 +172,7 @@ public class FieldOfView : MonoBehaviour
 
     private void IncreaseSuspicion()
     {
-        suspicion += .1f;
+        suspicion += .2f;
         if (suspicion > 1)
         {
             suspicionLevel1 = true;
@@ -218,7 +231,7 @@ public class FieldOfView : MonoBehaviour
         }
         if (suspicionLevel4 == true)
         {
-            player.GetComponent<FPSController>().canMove = false;
+            playerRef.GetComponent<FPSController>().canMove = false;
             loseUI.SetActive(true);
             pauseMenuRef.SetActive(false);
         }
